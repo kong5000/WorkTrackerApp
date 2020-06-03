@@ -1,8 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import Timer from '../components/Timer'
-import TimerButton from '../components/TimerButton'
-
+import AnimatedButton from '../components/AnimatedButton'
 const TimerScreen = () => {
     return (
         <View style={styles.screen}>

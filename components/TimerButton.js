@@ -1,11 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
-
+import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 const TimerButton = props => {
     return (
-        <TouchableOpacity onPress={() => {console.log('test!')}}>
+        <TouchableOpacity onPress={props.onPress}>
             <View style={styles.button}>
-                <Text>START</Text>
+                <Text>{props.label}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -13,11 +12,13 @@ const TimerButton = props => {
 
 const styles = StyleSheet.create({
     button: {
-        // width: screen.width / 2,
-        // height: screen.width /2,
-        // borderRadius: screen.width/2,
-        // borderWidth: 1,
-        // borderColor: 'black',
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        borderWidth: 1,
+        borderColor: 'black',
+        alignItems: "center",
+        justifyContent: "center"
     }
 })
 
