@@ -39,6 +39,7 @@ const Timer = () => {
                 </View>
             </TouchableOpacity>
             <TimerControl
+                style={styles.controls}
                 onPress={toggleTime}
                 timerActive={active}
                 resumeHandler={resumeHandler}
@@ -61,8 +62,11 @@ const styles = StyleSheet.create({
         borderRadius: screen.width / 2,
         borderWidth: 1,
         borderColor: 'black',
-        marginVertical: 20
+        marginBottom: 100,
+        marginTop: 150
     },
+    controls: {},
+
     timerText: {
         fontSize: 30,
     }

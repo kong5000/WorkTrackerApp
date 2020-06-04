@@ -1,10 +1,11 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Dimensions } from 'react-native'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Alert, Animated, Dimensions } from 'react-native'
 import TimerButton from '../components/TimerButton'
 const height = Dimensions.get('window').height
 const width = Dimensions.get('window').width
 
 const TimerControl = props => {
+    const [isPaused, setIsPaused] = useState(false)
     const startButtonHeight = useState(new Animated.Value(0))[0]
     const fade = useState(new Animated.Value(1))[0]
     const pauseCancelFade = useState(new Animated.Value(0))[0]
@@ -14,19 +15,19 @@ const TimerControl = props => {
     const moveInPauseCancel = () => {
         Animated.timing(pauseCancelFade, {
             toValue: 1,
-            duration: 1000,
+            duration: 200,
             useNativeDriver: true
         }).start()
 
         Animated.timing(cancelOffset, {
-            toValue: 0,
-            duration: 1000,
+            toValue: -50,
+            duration: 500,
             useNativeDriver: true
         }).start()
 
         Animated.timing(pauseOffset, {
-            toValue: 0,
-            duration: 1000,
+            toValue: 50,
+            duration: 500,
             useNativeDriver: true
         }).start()
     }
@@ -34,19 +35,19 @@ const TimerControl = props => {
     const moveOutPauseCancel = () => {
         Animated.timing(pauseCancelFade, {
             toValue: 0,
-            duration: 1000,
+            duration: 200,
             useNativeDriver: true
         }).start()
 
         Animated.timing(cancelOffset, {
-            toValue: width,
-            duration: 1000,
+            toValue: width / 2,
+            duration: 500,
             useNativeDriver: true
         }).start()
 
         Animated.timing(pauseOffset, {
-            toValue: -width,
-            duration: 1000,
+            toValue: -width / 2,
+            duration: 500,
             useNativeDriver: true
         }).start()
     }
@@ -55,7 +56,7 @@ const TimerControl = props => {
     const moveButtonUp = () => {
         Animated.timing(startButtonHeight, {
             toValue: 0,
-            duration: 1000,
+            duration: 500,
             useNativeDriver: true
         }).start()
 
@@ -68,7 +69,7 @@ const TimerControl = props => {
 
     const moveButtonDown = () => {
         Animated.timing(startButtonHeight, {
-            toValue: height,
+            toValue: height / 2,
             duration: 500,
             useNativeDriver: true
         }).start()
@@ -83,30 +84,48 @@ const TimerControl = props => {
     const onStart = () => {
         //Animate start button down
     }
-    const onPause = () => {
+    const togglePause = () => {
         //pause time
+        setIsPaused(oldPauseState => !oldPauseState)
+        props.resumeHandler()
     }
     const onCancel = () => {
-        moveOutPauseCancel()
+        Alert.alert("Are you sure you want to stop this session?", "", [
+            {
+                text: 'Okay',
+                style: 'destructive',
+                onPress: cancelTimer
+            },
+            {
+                text: 'Cancel',
+                style: 'cancel',
+                onPress: () => {}
+            }
+        ])
+
     }
+
+    const cancelTimer = () => {
+        setIsPaused(false)
+        moveOutPauseCancel()
+        props.cancelHandler()
+        moveButtonUp()
+    }
+
     let controls =
         <View style={styles.buttonRow}>
             <Animated.View style={
                 [{
                     opacity: pauseCancelFade,
-                    transform: [{translateX: pauseOffset}]
+                    transform: [{ translateX: pauseOffset }]
                 }]
             }>
-                <TimerButton label="PAUSE"
-                    onPress={() => {
-                        moveButtonUp()
-                        props.resumeHandler()
-                    }}
+                <TimerButton label={isPaused ? "Resume" : "Pause"}
+                    onPress={togglePause}
                 />
             </Animated.View>
             <Animated.View style={
                 [{
-                    backgroundColor: 'red',
                     transform: [{ translateY: startButtonHeight }],
                     opacity: fade
                 }]
@@ -120,15 +139,10 @@ const TimerControl = props => {
             <Animated.View style={
                 [{
                     opacity: pauseCancelFade,
-                    transform: [{translateX: cancelOffset}]
+                    transform: [{ translateX: cancelOffset }]
                 }]
             }>
-                <TimerButton label="CANCEL" onPress={() => {
-                    props.cancelHandler()
-                    moveButtonUp()
-                    onCancel()
-                }
-                } />
+                <TimerButton label="Stop" onPress={onCancel } />
             </Animated.View>
         </View >
 
@@ -142,7 +156,7 @@ const TimerControl = props => {
 const styles = StyleSheet.create({
     container: {
         width: '100%',
-        marginVertical: 20
+        marginVertical: 100,
     },
     startButton: {
         justifyContent: "center",
